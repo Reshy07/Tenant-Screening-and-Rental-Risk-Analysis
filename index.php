@@ -4,7 +4,7 @@ startSecureSession();
 
 // Redirect already logged-in users
 if (isLoggedIn()) {
-    $role = $_SESSION['role'];
+    $role = $_SESSION['role'] ?? null;
     if ($role === 'tenant')   { header('Location: pages/tenant_dashboard.php'); exit; }
     if ($role === 'landlord') { header('Location: pages/landlord_dashboard.php'); exit; }
     if ($role === 'admin')    { header('Location: pages/admin_dashboard.php'); exit; }
