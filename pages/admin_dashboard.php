@@ -61,7 +61,7 @@ $all_users = $db->query("SELECT * FROM users ORDER BY role, created_at DESC")->f
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="/rental_risk/css/styles.css?v=<?= filemtime(__DIR__ . '/../css/styles.css') ?>">
 </head>
 <body>
 <?php include '../php/navbar.php'; ?>
@@ -188,6 +188,6 @@ $all_users = $db->query("SELECT * FROM users ORDER BY role, created_at DESC")->f
         </table>
     </div>
 </div>
-<script src="../js/script.js"></script>
+<script src="/rental_risk/js/script.js"></script>
 </body>
 </html>

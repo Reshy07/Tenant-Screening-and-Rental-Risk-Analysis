@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Preferences</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="/rental_risk/css/styles.css?v=<?= filemtime(__DIR__ . '/../css/styles.css') ?>">
 </head>
 <body>
 <?php include '../php/navbar.php'; ?>
@@ -173,6 +173,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </p>
     </div>
 </div>
-<script src="../js/script.js"></script>
+<script src="/rental_risk/js/script.js"></script>
 </body>
 </html>

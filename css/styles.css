@@ -35,6 +35,227 @@ h1, h2, h3 { color: #2c3e50; margin-bottom: 10px; }
     background: linear-gradient(135deg, #1a3a5c 0%, #2980b9 100%);
 }
 
+.landing-shell {
+    min-height: 100vh;
+    padding: 48px 16px;
+    background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.14), transparent 28%),
+        linear-gradient(135deg, #0f2742 0%, #1d4f7a 52%, #2f7db6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.landing-card {
+    width: 100%;
+    max-width: 1140px;
+    background: rgba(255,255,255,0.96);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.20);
+    padding: 44px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.95fr);
+    gap: 32px;
+    border: 1px solid rgba(255,255,255,0.35);
+}
+
+.landing-badge {
+    display: inline-block;
+    margin-bottom: 12px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: #dff1ff;
+    color: #0f4f7a;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.landing-kicker {
+    font-size: 14px;
+    color: #3f647e;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.landing-copy h1 {
+    font-size: 44px;
+    line-height: 1.08;
+    margin-bottom: 16px;
+    max-width: 700px;
+}
+
+.landing-copy > p {
+    max-width: 640px;
+    color: #587083;
+    font-size: 17px;
+    margin-bottom: 22px;
+}
+
+.landing-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 22px 0 24px;
+}
+
+.landing-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.landing-stat {
+    background: linear-gradient(180deg, #f8fbfe 0%, #f2f7fb 100%);
+    border: 1px solid #dbe8f2;
+    border-radius: 14px;
+    padding: 16px;
+}
+
+.landing-stat strong {
+    display: block;
+    color: #19384f;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.landing-stat span {
+    display: block;
+    color: #5d6d7e;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.landing-points {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.landing-point {
+    background: #ffffff;
+    border: 1px solid #e3ecf3;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 24px rgba(20,58,92,0.06);
+}
+
+.landing-point h2,
+.landing-panel h2 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.landing-point p,
+.landing-panel p {
+    color: #5d6d7e;
+    font-size: 14px;
+}
+
+.landing-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.landing-panel {
+    background: linear-gradient(180deg, #f8fbfe 0%, #eff6fb 100%);
+    border: 1px solid #dbe8f2;
+    border-radius: 18px;
+    padding: 24px;
+}
+
+.landing-panel-soft {
+    background: rgba(255,255,255,0.9);
+}
+
+.landing-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 18px 0 20px;
+}
+
+.landing-step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.landing-step span {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #1d5f92;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.landing-step strong {
+    display: block;
+    font-size: 14px;
+    color: #19384f;
+    margin-bottom: 2px;
+}
+
+.landing-demo-list {
+    list-style: none;
+    margin-top: 14px;
+}
+
+.landing-demo-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #e6eef5;
+    color: #41576a;
+}
+
+.landing-demo-list li:last-child {
+    border-bottom: none;
+}
+
+.landing-panel .btn + .btn {
+    margin-top: 10px;
+}
+
+@media (max-width: 860px) {
+    .landing-card {
+        grid-template-columns: 1fr;
+        padding: 28px;
+    }
+
+    .landing-copy h1 {
+        font-size: 34px;
+    }
+
+    .landing-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .landing-shell {
+        padding: 24px 12px;
+    }
+
+    .landing-card {
+        padding: 22px;
+    }
+
+    .landing-points {
+        grid-template-columns: 1fr;
+    }
+
+    .landing-actions .btn {
+        width: 100%;
+    }
+}
+
 /* ---- Navbar ---- */
 .navbar {
     background: #1a3a5c;

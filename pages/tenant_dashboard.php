@@ -49,7 +49,7 @@ foreach ($applications as $a) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tenant Dashboard</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="/rental_risk/css/styles.css?v=<?= filemtime(__DIR__ . '/../css/styles.css') ?>">
 </head>
 <body>
 <?php include '../php/navbar.php'; ?>
@@ -197,6 +197,6 @@ foreach ($applications as $a) {
 
     <?php endif; ?>
 </div>
-<script src="../js/script.js"></script>
+<script src="/rental_risk/js/script.js"></script>
 </body>
 </html>

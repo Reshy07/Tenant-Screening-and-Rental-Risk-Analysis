@@ -34,7 +34,7 @@ $back_url = ($_SESSION['role'] === 'admin') ? 'admin_dashboard.php' : 'landlord_
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Application Details</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="/rental_risk/css/styles.css?v=<?= filemtime(__DIR__ . '/../css/styles.css') ?>">
 </head>
 <body>
 <?php include '../php/navbar.php'; ?>
@@ -187,6 +187,6 @@ $back_url = ($_SESSION['role'] === 'admin') ? 'admin_dashboard.php' : 'landlord_
     </div>
     <?php endif; ?>
 </div>
-<script src="../js/script.js"></script>
+<script src="/rental_risk/js/script.js"></script>
 </body>
 </html>

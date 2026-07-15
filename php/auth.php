@@ -18,7 +18,7 @@ function isLoggedIn() {
 
 function requireLogin() {
     if (!isLoggedIn()) {
-        header('Location: /rental_risk/index.php?error=Please+log+in+first');
+        header('Location: /rental_risk/login.php?error=Please+log+in+first');
         exit;
     }
 }
@@ -26,7 +26,7 @@ function requireLogin() {
 function requireRole($role) {
     requireLogin();
     if ($_SESSION['role'] !== $role) {
-        header('Location: /rental_risk/index.php?error=Access+denied');
+        header('Location: /rental_risk/login.php?error=Access+denied');
         exit;
     }
 }
@@ -34,7 +34,7 @@ function requireRole($role) {
 function requireAnyRole(array $roles) {
     requireLogin();
     if (!in_array($_SESSION['role'], $roles)) {
-        header('Location: /rental_risk/index.php?error=Access+denied');
+        header('Location: /rental_risk/login.php?error=Access+denied');
         exit;
     }
 }

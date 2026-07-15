@@ -6,7 +6,7 @@ $username = $_SESSION['username'] ?? '';
 ?>
 <nav class="navbar">
     <div class="nav-brand">
-        <img src="/rental_risk/images/home.png" class="nav-icon"> RentalRisk
+        <img src="/rental_risk/images/home.png" class="nav-icon"> TrueTenant
     </div>
     <div class="nav-links">
         <?php if ($role === 'tenant'): ?>
