@@ -31,7 +31,50 @@ if (isset($_GET['toggle_user'])) {
 // Insert sample data
 if (isset($_GET['insert_sample'])) {
     include '../php/insert_sample.php';
-    header('Location: admin_dashboard.php?msg=Sample+data+inserted');
+    if (!empty($insertSampleResult)) {
+        $summary = "Sample data ready: "
+                 . "users +" . intval($insertSampleResult['created_users']) . ", "
+                 . "tenant profiles +" . intval($insertSampleResult['created_tenants']) . ", "
+                 . "applications +" . intval($insertSampleResult['created_applications']) . ", "
+                 . "scores recalculated " . intval($insertSampleResult['recalculated_scores']) . ". "
+                 . "Updated existing: users " . intval($insertSampleResult['updated_users'])
+                 . ", tenants " . intval($insertSampleResult['updated_tenants'])
+                 . ", applications " . intval($insertSampleResult['updated_applications']) . ".";
+        header('Location: admin_dashboard.php?msg=' . urlencode($summary));
+    } else {
+        header('Location: admin_dashboard.php?error=Sample+data+insertion+did+not+return+a+result');
+    }
+    exit;
+}
+
+// Recalculate risk scores for all existing applications
+if (isset($_GET['recalculate_all'])) {
+    $rows = $db->query(
+        "SELECT a.id AS app_id, a.monthly_rent,
+                t.monthly_income, t.employment_status, t.rental_history_months,
+                t.reference_text, t.age, t.guarantor_info
+         FROM applications a
+         JOIN tenants t ON t.id = a.tenant_id"
+    );
+
+    $updated = 0;
+    if ($rows) {
+        while ($row = $rows->fetch_assoc()) {
+            $rent = floatval($row['monthly_rent']);
+            $is_first_time = (intval($row['rental_history_months']) === 0) ? 1 : 0;
+
+            $weighted_score = calculateWeightedRiskScore($row, $rent);
+            $ml_probability = getMLProbability($row, $rent);
+            $final_risk     = calculateFinalRisk($weighted_score, $ml_probability, $is_first_time);
+
+            if (saveRiskScore(intval($row['app_id']), $weighted_score, $ml_probability, $final_risk, $is_first_time)) {
+                $updated++;
+            }
+        }
+        $rows->free();
+    }
+
+    header('Location: admin_dashboard.php?msg=' . urlencode("Recalculated risk scores for {$updated} applications"));
     exit;
 }
 
@@ -80,7 +123,7 @@ $all_users = $db->query("SELECT * FROM users ORDER BY role, created_at DESC")->f
         <div class="stat-card"><div class="stat-num"><?= $stats['total_landlords'] ?></div><div>Landlords</div></div>
         <div class="stat-card"><div class="stat-num"><?= $stats['total_applications'] ?></div><div>Applications</div></div>
         <div class="stat-card <?= floatval($stats['avg_risk'] ?? 0) > 0.5 ? 'stat-red' : 'stat-green' ?>">
-            <div class="stat-num"><?= $stats['avg_risk'] ? number_format($stats['avg_risk'], 3) : 'N/A' ?></div>
+            <div class="stat-num"><?= $stats['avg_risk'] !== null ? formatRiskPercent($stats['avg_risk']) : 'N/A' ?></div>
             <div>Avg Risk</div>
         </div>
     </div>
@@ -91,6 +134,11 @@ $all_users = $db->query("SELECT * FROM users ORDER BY role, created_at DESC")->f
         <a href="admin_dashboard.php?insert_sample=1" class="btn btn-secondary"
            onclick="return confirm('Insert sample test data?')">
             <img src="/rental_risk/images/chart.png" class="inline-icon"> Insert Sample Test Data
+        </a>
+        <a href="admin_dashboard.php?recalculate_all=1" class="btn btn-primary"
+           onclick="return confirm('Recalculate risk scores for all applications?')"
+           style="margin-left:8px">
+            <img src="/rental_risk/images/settings.png" class="inline-icon"> Recalculate All Risk Scores
         </a>
     </div>
 
@@ -122,11 +170,11 @@ $all_users = $db->query("SELECT * FROM users ORDER BY role, created_at DESC")->f
                     <td><?= htmlspecialchars($app['property_title'] ?? $app['property_note'] ?? '—') ?></td>
                     <td><?= number_format($app['monthly_rent'], 0) ?></td>
                     <td><?= htmlspecialchars($app['landlord_username'] ?? '—') ?></td>
-                    <td><?= ($app['weighted_score'] !== null) ? number_format($app['weighted_score'], 3) : '—' ?></td>
-                    <td><?= ($app['ml_probability'] !== null) ? number_format($app['ml_probability'], 3) : '—' ?></td>
+                    <td><?= ($app['weighted_score'] !== null) ? formatRiskPercent($app['weighted_score']) : '—' ?></td>
+                    <td><?= ($app['ml_probability'] !== null) ? formatRiskPercent($app['ml_probability']) : '—' ?></td>
                     <td>
                         <?php if ($risk_info): ?>
-                            <span class="risk-badge <?= $risk_info['class'] ?>"><?= number_format($app['final_risk'], 3) ?></span>
+                            <span class="risk-badge <?= $risk_info['class'] ?>\"><?= formatRiskPercent($app['final_risk']) ?></span>
                             <?php if ($app['is_first_time_renter']): ?>
                                 <br><small class="warning-text">
                                     <img src="/rental_risk/images/warning.png" class="inline-icon"> First-time

@@ -20,15 +20,15 @@ if (isset($_GET['msg'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TrueTenant</title>
-    <link rel="stylesheet" href="/rental_risk/css/styles.css?v=<?= filemtime(__DIR__ . '/css/styles.css') ?>">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 <div class="landing-shell">
-    <div class="landing-card">
-        <div class="landing-copy">
+    <div class="hero">
+        <div class="hero-inner">
             <div class="landing-badge">TrueTenant</div>
-            <div class="landing-kicker">Rental screening made clear and organized</div>
             <h1>Manage tenant screening from one structured workspace.</h1>
+            <div class="landing-kicker">Rental screening made clear and organized</div>
             <p>
                 TrueTenant helps landlords review applications and helps tenants keep their profile, preferences,
                 and applications in one place. Start from the dashboard that fits your role.
@@ -42,17 +42,25 @@ if (isset($_GET['msg'])) {
                 <a href="login.php" class="btn btn-primary">Login</a>
                 <a href="pages/register.php" class="btn btn-outline">Create Account</a>
             </div>
+        </div>
 
+    </div>
+
+    <div class="landing-content">
+        <div class="landing-main">
             <div class="landing-stats">
                 <div class="landing-stat">
+                    <div class="landing-icon-badge"><img src="/rental_risk/images/user.png" alt=""></div>
                     <strong>Tenant Profiles</strong>
                     <span>Store screening details and preferences in one place.</span>
                 </div>
                 <div class="landing-stat">
+                    <div class="landing-icon-badge"><img src="/rental_risk/images/clipboard.png" alt=""></div>
                     <strong>Application Tracking</strong>
                     <span>Follow each rental application from review to final decision.</span>
                 </div>
                 <div class="landing-stat">
+                    <div class="landing-icon-badge"><img src="/rental_risk/images/chart.png" alt=""></div>
                     <strong>Risk-Based Decisions</strong>
                     <span>Use system insights to support approval and rejection decisions.</span>
                 </div>
@@ -60,10 +68,12 @@ if (isset($_GET['msg'])) {
 
             <div class="landing-points">
                 <div class="landing-point">
+                    <div class="landing-icon-badge landing-icon-badge-lg"><img src="/rental_risk/images/building.png" alt=""></div>
                     <h2>For Landlords</h2>
                     <p>Review applicants, compare risk results, and manage property approvals with a cleaner workflow.</p>
                 </div>
                 <div class="landing-point">
+                    <div class="landing-icon-badge landing-icon-badge-lg"><img src="/rental_risk/images/home.png" alt=""></div>
                     <h2>For Tenants</h2>
                     <p>Create a profile, browse available properties, and keep track of every submitted application.</p>
                 </div>
@@ -93,19 +103,9 @@ if (isset($_GET['msg'])) {
                 <a href="login.php" class="btn btn-primary btn-full">Go to Login</a>
                 <a href="pages/register.php" class="btn btn-secondary btn-full">Register Now</a>
             </div>
-
-            <div class="landing-panel landing-panel-soft">
-                <h2>Demo Access</h2>
-                <p>Password for every demo account: <code>password</code></p>
-                <ul class="landing-demo-list">
-                    <li><strong>Admin:</strong> admin</li>
-                    <li><strong>Landlord:</strong> landlord_ram</li>
-                    <li><strong>Tenant:</strong> tenant_hari</li>
-                </ul>
-            </div>
         </div>
     </div>
 </div>
-<script src="/rental_risk/js/script.js"></script>
+<script src="css/styles.css"></script>
 </body>
 </html>

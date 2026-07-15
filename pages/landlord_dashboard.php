@@ -106,11 +106,11 @@ foreach ($applications as $a) {
                     <td>NPR <?= number_format($app['monthly_rent'],0) ?></td>
                     <td>NPR <?= number_format($app['monthly_income'],0) ?></td>
                     <td><?= ucfirst(str_replace('_',' ',$app['employment_status'])) ?></td>
-                    <td><?= $app['weighted_score'] !== null ? number_format($app['weighted_score'],3) : '—' ?></td>
-                    <td><?= $app['ml_probability'] !== null ? number_format($app['ml_probability'],3) : '—' ?></td>
+                    <td><?= $app['weighted_score'] !== null ? formatRiskPercent($app['weighted_score']) : '—' ?></td>
+                    <td><?= $app['ml_probability'] !== null ? formatRiskPercent($app['ml_probability']) : '—' ?></td>
                     <td>
                         <?php if ($risk_info): ?>
-                            <span class="risk-badge <?= $risk_info['class'] ?>"><?= number_format($app['final_risk'],3) ?></span>
+                            <span class="risk-badge <?= $risk_info['class'] ?>\"><?= formatRiskPercent($app['final_risk']) ?></span>
                             <br><small><?= $risk_info['label'] ?></small>
                             <?php if ($app['is_first_time_renter']): ?>
                                 <br><small class="warning-text">

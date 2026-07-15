@@ -14,9 +14,9 @@ define('UPLOAD_DIR', __DIR__ . '/../uploads/');
 define('UPLOAD_URL', 'uploads/');
 
 // Python executable path (adjust if needed for your system)
-// Windows XAMPP: 'python' or 'py'
-// Linux/Mac: 'python3'
-define('PYTHON_PATH', 'python');
+// Use full path on Windows/XAMPP so Apache can always find Python.
+// Linux/Mac example: 'python3'
+define('PYTHON_PATH', 'C:/Users/user/AppData/Local/Python/pythoncore-3.14-64/python.exe');
 define('PYTHON_SCRIPTS_DIR', __DIR__ . '/../python/');
 
 function getDB() {

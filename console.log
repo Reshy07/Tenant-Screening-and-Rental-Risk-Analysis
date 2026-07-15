@@ -1,0 +1,15 @@
+Loaded 500 training samples.
+Defaulted: 196, Non-defaulted: 304
+
+Model Accuracy on test set: 86.00%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+    Low Risk       0.89      0.89      0.89        61
+   High Risk       0.82      0.82      0.82        39
+
+    accuracy                           0.86       100
+   macro avg       0.85      0.85      0.85       100
+weighted avg       0.86      0.86      0.86       100
+

@@ -175,7 +175,7 @@ foreach ($applications as $a) {
                     <td>
                         <?php if ($risk_info): ?>
                             <span class="risk-badge <?= $risk_info['class'] ?>">
-                                <?= number_format($final_risk, 3) ?> — <?= $risk_info['label'] ?>
+                                <?= formatRiskPercent($final_risk) ?> — <?= $risk_info['label'] ?>
                             </span>
                             <?php if ($app['is_first_time_renter']): ?>
                                 <br><small class="warning-text">

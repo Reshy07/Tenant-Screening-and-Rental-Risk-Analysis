@@ -100,7 +100,7 @@ function getMLProbability($tenant, $monthly_rent) {
     $rent        = floatval($monthly_rent);
     $age         = intval($tenant['age']);
 
-    $python = PYTHON_PATH;
+    $python = escapeshellarg(PYTHON_PATH);
     $script  = escapeshellarg(PYTHON_SCRIPTS_DIR . 'predict.py');
 
     // Pass features as command line arguments
@@ -117,7 +117,15 @@ function getMLProbability($tenant, $monthly_rent) {
 
     if ($output === null) return 0.5; // shell_exec disabled or Python not found
 
-    $prob = floatval(trim($output));
+    $raw = trim($output);
+
+    // Accept output only when a numeric value is actually present.
+    // This avoids treating error text as 0.0 via floatval().
+    if (!preg_match('/[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?/', $raw, $matches)) {
+        return 0.5;
+    }
+
+    $prob = floatval($matches[0]);
     if ($prob < 0 || $prob > 1) return 0.5; // unexpected output
 
     return round($prob, 4);
@@ -218,5 +226,11 @@ function getRiskLabel($score) {
     if ($score < 0.4)       return ['label' => 'Low Risk',    'class' => 'risk-low',    'color' => '#27ae60'];
     elseif ($score <= 0.7)  return ['label' => 'Medium Risk', 'class' => 'risk-medium', 'color' => '#f39c12'];
     else                    return ['label' => 'High Risk',   'class' => 'risk-high',   'color' => '#e74c3c'];
+}
+
+// Format normalized risk score (0.0-1.0) as percentage for UI
+function formatRiskPercent($score, $decimals = 1) {
+    if ($score === null || $score === '') return '—';
+    return number_format(floatval($score) * 100, $decimals) . '%';
 }
 ?>

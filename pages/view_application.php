@@ -48,13 +48,13 @@ $back_url = ($_SESSION['role'] === 'admin') ? 'admin_dashboard.php' : 'landlord_
     <?php if ($risk_info): ?>
     <div class="risk-banner <?= $risk_info['class'] ?>-banner">
         <div class="risk-banner-left">
-            <div class="risk-score-big"><?= number_format($app['final_risk'], 3) ?></div>
+            <div class="risk-score-big"><?= formatRiskPercent($app['final_risk']) ?></div>
             <div class="risk-label-big"><?= $risk_info['label'] ?></div>
         </div>
         <div class="risk-banner-details">
-            <div><strong>Weighted Score (Algorithm A):</strong> <?= number_format($app['weighted_score'], 4) ?></div>
-            <div><strong>ML Probability (Algorithm B):</strong> <?= number_format($app['ml_probability'], 4) ?></div>
-            <div><strong>Final Combined Risk:</strong> <?= number_format($app['final_risk'], 4) ?></div>
+            <div><strong>Weighted Score (Algorithm A):</strong> <?= formatRiskPercent($app['weighted_score'], 2) ?></div>
+            <div><strong>ML Probability (Algorithm B):</strong> <?= formatRiskPercent($app['ml_probability'], 2) ?></div>
+            <div><strong>Final Combined Risk:</strong> <?= formatRiskPercent($app['final_risk'], 2) ?></div>
             <div><strong>Calculated:</strong> <?= $app['calculated_at'] ?? 'N/A' ?></div>
         </div>
         <?php if ($app['is_first_time_renter']): ?>
