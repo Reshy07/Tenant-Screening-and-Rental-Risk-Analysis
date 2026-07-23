@@ -146,7 +146,6 @@ $all_users = $db->query("SELECT * FROM users ORDER BY role, created_at DESC")->f
     <div class="card">
         <div class="card-header">
             <h3>All Applications</h3>
-            <small class="text-muted">Sorted by risk — QuickSort Algorithm</small>
         </div>
         <div class="table-scroll">
         <table class="data-table">

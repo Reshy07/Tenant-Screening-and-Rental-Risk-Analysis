@@ -75,7 +75,6 @@ foreach ($applications as $a) {
     <div class="card">
         <div class="card-header">
             <h3>All Tenant Applications</h3>
-            <small class="text-muted">Sorted highest risk first — QuickSort Algorithm</small>
         </div>
 
         <?php if (empty($applications)): ?>

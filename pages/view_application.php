@@ -27,6 +27,15 @@ if (!$app) { header('Location: landlord_dashboard.php?error=Application+not+foun
 
 $risk_info = $app['final_risk'] !== null ? getRiskLabel($app['final_risk']) : null;
 $back_url = ($_SESSION['role'] === 'admin') ? 'admin_dashboard.php' : 'landlord_dashboard.php';
+$is_admin = $_SESSION['role'] === 'admin';
+$risk_breakdown = null;
+$final_formula = null;
+if ($is_admin) {
+    $risk_breakdown = calculateWeightedRiskBreakdown($app, $app['monthly_rent']);
+    $final_formula = $app['is_first_time_renter']
+        ? '0.7 x weighted + 0.3 x ML probability'
+        : '0.6 x weighted + 0.4 x ML probability';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -64,6 +73,42 @@ $back_url = ($_SESSION['role'] === 'admin') ? 'admin_dashboard.php' : 'landlord_
             Consider requesting a higher security deposit or a guarantor.
         </div>
         <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if ($is_admin): ?>
+    <div class="card">
+        <div class="card-header">
+            <h3><img src="/rental_risk/images/ai.png" class="heading-icon"> Admin Risk Breakdown</h3>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <table class="detail-table">
+                    <tr><th>Income</th><td>NPR <?= number_format($risk_breakdown['monthly_income'], 2) ?></td></tr>
+                    <tr><th>Rent Used</th><td>NPR <?= number_format($risk_breakdown['monthly_rent'], 2) ?></td></tr>
+                    <tr><th>Income/Rent Ratio</th><td><?= number_format($risk_breakdown['income_rent_ratio'], 2) ?>x</td></tr>
+                    <tr><th>Employment Status</th><td><?= ucfirst(str_replace('_', ' ', $app['employment_status'])) ?></td></tr>
+                    <tr><th>Rental History</th><td><?= intval($app['rental_history_months']) ?> months</td></tr>
+                    <tr><th>Reference Detected</th><td><?= $risk_breakdown['has_reference'] ? 'Yes' : 'No' ?></td></tr>
+                    <tr><th>Guarantor Detected</th><td><?= $risk_breakdown['has_guarantor'] ? 'Yes' : 'No' ?></td></tr>
+                </table>
+            </div>
+
+            <div>
+                <table class="detail-table">
+                    <tr><th>Income Ratio Risk</th><td><?= formatRiskPercent($risk_breakdown['income_ratio_risk'], 2) ?></td></tr>
+                    <tr><th>Employment Risk</th><td><?= formatRiskPercent($risk_breakdown['employment_risk'], 2) ?></td></tr>
+                    <tr><th>Reference Risk</th><td><?= formatRiskPercent($risk_breakdown['reference_risk'], 2) ?></td></tr>
+                    <tr><th>History Risk</th><td><?= formatRiskPercent($risk_breakdown['history_risk'], 2) ?></td></tr>
+                    <tr><th>Weighted Formula</th><td>(0.4 x <?= number_format($risk_breakdown['income_ratio_risk'], 2) ?>) + (0.3 x <?= number_format($risk_breakdown['employment_risk'], 2) ?>) + (0.2 x <?= number_format($risk_breakdown['reference_risk'], 2) ?>) + (0.1 x <?= number_format($risk_breakdown['history_risk'], 2) ?>)</td></tr>
+                    <tr><th>Weighted Score</th><td><?= formatRiskPercent($risk_breakdown['weighted_score'], 2) ?></td></tr>
+                    <tr><th>ML Probability</th><td><?= $app['ml_probability'] !== null ? formatRiskPercent($app['ml_probability'], 2) : 'Not available' ?></td></tr>
+                    <tr><th>Final Formula</th><td><?= htmlspecialchars($final_formula) ?></td></tr>
+                    <tr><th>Final Risk</th><td><?= $app['final_risk'] !== null ? formatRiskPercent($app['final_risk'], 2) : 'Not available' ?></td></tr>
+                </table>
+            </div>
+        </div>
     </div>
     <?php endif; ?>
 

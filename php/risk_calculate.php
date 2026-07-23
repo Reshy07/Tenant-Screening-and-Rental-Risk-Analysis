@@ -9,20 +9,11 @@
 
 require_once __DIR__ . '/config.php';
 
-// ============================================================
-// ALGORITHM A: Rule-Based Weighted Risk Scoring
-// Formula: S = 0.4*credit_score_norm + 0.3*employment_score
-//            + 0.2*reference_score + 0.1*income_ratio
-// Each factor is normalized to 0.0 – 1.0
-// Higher score = HIGHER RISK
-// ============================================================
-function calculateWeightedRiskScore($tenant, $monthly_rent) {
-    // --- 1. Income Ratio Score (higher income relative to rent = lower risk) ---
-    // If income >= 3x rent: ratio_score = 0.0 (very safe)
-    // If income < rent:     ratio_score = 1.0 (very risky)
+function calculateWeightedRiskBreakdown($tenant, $monthly_rent) {
     $income = floatval($tenant['monthly_income']);
     $rent   = floatval($monthly_rent);
     if ($rent <= 0) $rent = 1;
+
     $ratio = $income / $rent;
     if ($ratio >= 3.0)      $income_ratio_risk = 0.0;
     elseif ($ratio >= 2.5)  $income_ratio_risk = 0.2;
@@ -31,58 +22,70 @@ function calculateWeightedRiskScore($tenant, $monthly_rent) {
     elseif ($ratio >= 1.0)  $income_ratio_risk = 0.8;
     else                    $income_ratio_risk = 1.0;
 
-    // --- 2. Employment Score (stable employment = lower risk) ---
-    // student_funded = student whose rent is covered by parent/guardian
-    // They are treated more leniently IF they have a guarantor declared
     $has_guarantor = strlen(trim($tenant['guarantor_info'] ?? '')) > 10;
 
     $emp_map = [
-        'employed'        => 0.1,  // Most stable
-        'self_employed'   => 0.3,  // Somewhat stable
-        'student_funded'  => 0.35, // Student with guarantor — treated nearly like self-employed
-        'student'         => 0.6,  // Student with no guarantor — moderate risk
-        'unemployed'      => 0.9,  // Highest risk
+        'employed'        => 0.1,
+        'self_employed'   => 0.3,
+        'student_funded'  => 0.35,
+        'student'         => 0.6,
+        'unemployed'      => 0.9,
     ];
     $employment_risk = $emp_map[$tenant['employment_status']] ?? 0.5;
 
-    // If student_funded but NO guarantor provided, bump risk back up
-    if ($tenant['employment_status'] === 'student_funded' && !$has_guarantor) {
+    if (($tenant['employment_status'] ?? '') === 'student_funded' && !$has_guarantor) {
         $employment_risk = 0.55;
     }
 
-    // --- 3. Reference / Guarantor Score (positive reference or guarantor = lower risk) ---
     $ref_text = trim($tenant['reference_text'] ?? '');
-
-    // If a guarantor is declared, this heavily reduces reference risk
-    // A guarantor is a co-signer who promises to pay if the tenant cannot
     if ($has_guarantor && strlen($ref_text) > 20) {
-        $reference_risk = 0.05; // Guarantor + reference = very low risk
+        $reference_risk = 0.05;
     } elseif ($has_guarantor) {
-        $reference_risk = 0.15; // Guarantor alone = low risk
+        $reference_risk = 0.15;
     } elseif (strlen($ref_text) > 50) {
-        $reference_risk = 0.1;  // Good detailed reference
+        $reference_risk = 0.1;
     } elseif (strlen($ref_text) > 10) {
-        $reference_risk = 0.4;  // Partial reference
+        $reference_risk = 0.4;
     } else {
-        $reference_risk = 0.8;  // No reference, no guarantor
+        $reference_risk = 0.8;
     }
 
-    // --- 4. Rental History Score (more history = lower risk) ---
     $history = intval($tenant['rental_history_months']);
     if ($history >= 24)      $history_risk = 0.1;
     elseif ($history >= 12)  $history_risk = 0.3;
     elseif ($history >= 6)   $history_risk = 0.5;
     elseif ($history >= 1)   $history_risk = 0.7;
-    else                     $history_risk = 1.0; // First-time renter
+    else                     $history_risk = 1.0;
 
-    // --- Weighted Formula ---
-    // Weights: income=0.4, employment=0.3, reference=0.2, history=0.1
     $weighted_score = (0.4 * $income_ratio_risk)
                     + (0.3 * $employment_risk)
                     + (0.2 * $reference_risk)
                     + (0.1 * $history_risk);
 
-    return round(min(1.0, max(0.0, $weighted_score)), 4);
+    return [
+        'monthly_income' => $income,
+        'monthly_rent' => floatval($monthly_rent),
+        'income_rent_ratio' => round($ratio, 4),
+        'income_ratio_risk' => round($income_ratio_risk, 4),
+        'employment_risk' => round($employment_risk, 4),
+        'reference_risk' => round($reference_risk, 4),
+        'history_risk' => round($history_risk, 4),
+        'weighted_score' => round(min(1.0, max(0.0, $weighted_score)), 4),
+        'has_reference' => strlen($ref_text) > 10,
+        'has_guarantor' => $has_guarantor,
+    ];
+}
+
+// ============================================================
+// ALGORITHM A: Rule-Based Weighted Risk Scoring
+// Formula: S = 0.4*income_ratio_risk + 0.3*employment_risk
+//            + 0.2*reference_risk + 0.1*history_risk
+// Each factor is normalized to 0.0 – 1.0
+// Higher score = HIGHER RISK
+// ============================================================
+function calculateWeightedRiskScore($tenant, $monthly_rent) {
+    $breakdown = calculateWeightedRiskBreakdown($tenant, $monthly_rent);
+    return $breakdown['weighted_score'];
 }
 
 // ============================================================
