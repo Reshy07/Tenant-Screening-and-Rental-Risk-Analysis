@@ -15,9 +15,25 @@ if (!$app_id || !in_array($status, $allowed)) {
     exit;
 }
 
-$stmt = $db->prepare("UPDATE applications SET status=?, landlord_id=? WHERE id=?");
-$stmt->bind_param("sii", $status, $_SESSION['user_id'], $app_id);
+$sql = "UPDATE applications SET status=?, landlord_id=? WHERE id=?";
+if ($_SESSION['role'] !== 'admin') {
+    $sql .= " AND landlord_id = ?";
+}
+
+$stmt = $db->prepare($sql);
+if ($_SESSION['role'] === 'admin') {
+    $stmt->bind_param("sii", $status, $_SESSION['user_id'], $app_id);
+} else {
+    $stmt->bind_param("siii", $status, $_SESSION['user_id'], $app_id, $_SESSION['user_id']);
+}
 $stmt->execute();
+
+if ($stmt->affected_rows === 0 && $_SESSION['role'] !== 'admin') {
+    $stmt->close();
+    header('Location: landlord_dashboard.php?error=Not+authorized+to+update+this+application');
+    exit;
+}
+
 $stmt->close();
 
 if ($redirect_view) {

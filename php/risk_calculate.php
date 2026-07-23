@@ -4,7 +4,6 @@
 // Contains:
 //   A. Weighted Rule-Based Risk Score (PHP)
 //   B. ML Probability via Python logistic regression (shell_exec)
-//   C. QuickSort algorithm to sort applications by risk (PHP)
 // ============================================================
 
 require_once __DIR__ . '/config.php';

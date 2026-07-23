@@ -10,7 +10,7 @@ $landlord_id = $_SESSION['user_id'];
 $msg         = htmlspecialchars($_GET['msg'] ?? '');
 $error       = htmlspecialchars($_GET['error'] ?? '');
 
-// Load ALL applications (landlords see everyone so they can screen)
+// Load only this landlord's applications
 $sql = "SELECT a.id AS app_id, a.property_note, a.monthly_rent, a.status, a.applied_date,
                t.full_name, t.age, t.monthly_income, t.employment_status, t.rental_history_months,
                t.reference_text, t.id_proof_path, t.income_proof_path, t.employment_proof_path,
@@ -22,10 +22,14 @@ $sql = "SELECT a.id AS app_id, a.property_note, a.monthly_rent, a.status, a.appl
         JOIN users u   ON u.id = t.user_id
         LEFT JOIN properties p ON p.id = a.property_id
         LEFT JOIN risk_scores rs ON rs.application_id = a.id
+    WHERE a.landlord_id = ?
         ORDER BY a.applied_date DESC";
 
-$result      = $db->query($sql);
-$applications = $result->fetch_all(MYSQLI_ASSOC);
+$stmt = $db->prepare($sql);
+$stmt->bind_param("i", $landlord_id);
+$stmt->execute();
+$applications = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
 
 // ALGORITHM C: QuickSort — sort by final_risk descending
 $applications = sortApplicationsByRisk($applications);

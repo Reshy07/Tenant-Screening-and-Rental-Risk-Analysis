@@ -72,12 +72,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label class="role-option">
                         <input type="radio" name="role" value="tenant"
                                <?= ($_POST['role'] ?? '') === 'tenant' ? 'checked' : '' ?>>
-                        <span>🧑 Tenant</span>
+                        <span>Tenant</span>
                     </label>
                     <label class="role-option">
                         <input type="radio" name="role" value="landlord"
                                <?= ($_POST['role'] ?? '') === 'landlord' ? 'checked' : '' ?>>
-                        <span>🏘️ Landlord</span>
+                        <span>Landlord</span>
                     </label>
                 </div>
             </div>

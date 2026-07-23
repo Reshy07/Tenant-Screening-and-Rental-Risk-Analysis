@@ -9,6 +9,8 @@ $db = getDB();
 $app_id = intval($_GET['id'] ?? 0);
 if (!$app_id) { header('Location: landlord_dashboard.php'); exit; }
 
+$is_admin = $_SESSION['role'] === 'admin';
+
 $sql = "SELECT a.id AS app_id, a.property_note, a.monthly_rent, a.status, a.applied_date,
                t.*, u.username AS tenant_username, u.email AS tenant_email,
                rs.weighted_score, rs.ml_probability, rs.final_risk, rs.is_first_time_renter, rs.calculated_at
@@ -17,8 +19,17 @@ $sql = "SELECT a.id AS app_id, a.property_note, a.monthly_rent, a.status, a.appl
         JOIN users u ON u.id = t.user_id
         LEFT JOIN risk_scores rs ON rs.application_id = a.id
         WHERE a.id = ?";
+
+if (!$is_admin) {
+    $sql .= " AND a.landlord_id = ?";
+}
+
 $stmt = $db->prepare($sql);
-$stmt->bind_param("i", $app_id);
+if ($is_admin) {
+    $stmt->bind_param("i", $app_id);
+} else {
+    $stmt->bind_param("ii", $app_id, $_SESSION['user_id']);
+}
 $stmt->execute();
 $app = $stmt->get_result()->fetch_assoc();
 $stmt->close();
@@ -27,7 +38,6 @@ if (!$app) { header('Location: landlord_dashboard.php?error=Application+not+foun
 
 $risk_info = $app['final_risk'] !== null ? getRiskLabel($app['final_risk']) : null;
 $back_url = ($_SESSION['role'] === 'admin') ? 'admin_dashboard.php' : 'landlord_dashboard.php';
-$is_admin = $_SESSION['role'] === 'admin';
 $risk_breakdown = null;
 $final_formula = null;
 if ($is_admin) {
