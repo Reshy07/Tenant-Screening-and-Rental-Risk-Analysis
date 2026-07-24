@@ -35,17 +35,6 @@ CREATE TABLE IF NOT EXISTS tenants (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS tenant_preferences (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    tenant_id INT NOT NULL UNIQUE,
-    preferred_min_rent DECIMAL(12,2) DEFAULT 0,
-    preferred_max_rent DECIMAL(12,2) DEFAULT 0,
-    preferred_area VARCHAR(255) DEFAULT '',
-    preferred_type ENUM('any','room','flat','house','office') DEFAULT 'any',
-    preferred_bedrooms INT DEFAULT 0,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE
-);
 
 CREATE TABLE IF NOT EXISTS properties (
     id INT AUTO_INCREMENT PRIMARY KEY,

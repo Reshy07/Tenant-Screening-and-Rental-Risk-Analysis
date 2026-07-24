@@ -100,8 +100,7 @@ function getMLProbability($tenant, $monthly_rent) {
     $history     = intval($tenant['rental_history_months']);
     $has_ref     = (strlen(trim($tenant['reference_text'] ?? '')) > 10) ? 1 : 0;
     $rent        = floatval($monthly_rent);
-    $age         = intval($tenant['age']);
-
+    
     $python = escapeshellarg(PYTHON_PATH);
     $script  = escapeshellarg(PYTHON_SCRIPTS_DIR . 'predict.py');
 
@@ -111,9 +110,8 @@ function getMLProbability($tenant, $monthly_rent) {
          . escapeshellarg($emp_code) . " "
          . escapeshellarg($history) . " "
          . escapeshellarg($has_ref) . " "
-         . escapeshellarg($rent) . " "
-         . escapeshellarg($age)
-         . " 2>&1";
+         . escapeshellarg($rent) 
+                  . " 2>&1";
 
     $output = shell_exec($cmd);
 
