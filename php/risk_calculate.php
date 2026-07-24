@@ -95,11 +95,12 @@ function calculateWeightedRiskScore($tenant, $monthly_rent) {
 // ============================================================
 function getMLProbability($tenant, $monthly_rent) {
     $income      = floatval($tenant['monthly_income']);
-    $emp_map     = ['employed'=>1,'self_employed'=>2,'student'=>3,'unemployed'=>4];
+    $emp_map     = ['employed'=>1,'self_employed'=>2,'student'=>3,'student_funded'=>3,'unemployed'=>4];
     $emp_code    = $emp_map[$tenant['employment_status']] ?? 2;
     $history     = intval($tenant['rental_history_months']);
     $has_ref     = (strlen(trim($tenant['reference_text'] ?? '')) > 10) ? 1 : 0;
     $rent        = floatval($monthly_rent);
+    $age         = max(18, intval($tenant['age'] ?? 0));
     
     $python = escapeshellarg(PYTHON_PATH);
     $script  = escapeshellarg(PYTHON_SCRIPTS_DIR . 'predict.py');
@@ -110,7 +111,8 @@ function getMLProbability($tenant, $monthly_rent) {
          . escapeshellarg($emp_code) . " "
          . escapeshellarg($history) . " "
          . escapeshellarg($has_ref) . " "
-         . escapeshellarg($rent) 
+         . escapeshellarg($rent) . " "
+         . escapeshellarg($age)
                   . " 2>&1";
 
     $output = shell_exec($cmd);

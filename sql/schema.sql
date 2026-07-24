@@ -50,6 +50,20 @@ CREATE TABLE IF NOT EXISTS properties (
     FOREIGN KEY (landlord_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS tenant_preferences (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tenant_id INT NOT NULL,
+    preferred_min_rent DECIMAL(12,2) DEFAULT 0,
+    preferred_max_rent DECIMAL(12,2) DEFAULT 0,
+    preferred_area VARCHAR(255),
+    preferred_type ENUM('any','room','flat','house','office') NOT NULL DEFAULT 'any',
+    preferred_bedrooms INT DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_tenant (tenant_id),
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS applications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tenant_id INT NOT NULL,
@@ -88,6 +102,11 @@ INSERT INTO tenants (user_id, full_name, age, contact, address, monthly_income, 
 (4, 'Hari Prasad Sharma', 28, '9841000001', 'Baneshwor, Kathmandu', 45000, 'employed',      24, 'Ram Bahadur 9841111111 - Excellent tenant, never missed rent.'),
 (5, 'Gita Kumari Thapa',  22, '9841000002', 'Lalitpur, Patan',      20000, 'student',        0, ''),
 (6, 'Bikash Raj Karki',   35, '9841000003', 'Bhaktapur',            60000, 'self_employed', 48, 'Sita Maharjan - Reliable, maintained property well.');
+
+INSERT INTO tenant_preferences (tenant_id, preferred_min_rent, preferred_max_rent, preferred_area, preferred_type, preferred_bedrooms) VALUES
+(1, 10000, 20000, 'Kathmandu, Thamel', 'flat', 2),
+(2, 5000, 10000, 'Lalitpur, Patan', 'room', 1),
+(3, 25000, 40000, 'Kathmandu', 'house', 3);
 
 INSERT INTO properties (landlord_id, title, description, address, monthly_rent, bedrooms, property_type, is_available) VALUES
 (2, 'Cozy 2BHK Flat in Thamel',    'Fully furnished, close to restaurants. Water included.',     'Flat 3A, Thamel, Kathmandu',        15000, 2, 'flat',   1),
